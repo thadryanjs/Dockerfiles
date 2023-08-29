@@ -1,5 +1,5 @@
 FROM fedora:latest
-RUN dnf install -y wget git make clang neovim tmux nodejs julia \
+RUN dnf install -y wget git make clang neovim tmux nodejs julia texlive-scheme-full \
     && wget https://github.com/artempyanykh/marksman/releases/download/2023-07-25/marksman-linux-x64 \
     && mv marksman-linux-x64 marksman \
     && chmod +x marksman \
@@ -15,6 +15,10 @@ RUN dnf install -y wget git make clang neovim tmux nodejs julia \
     && wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.361/quarto-1.3.361-linux-amd64.tar.gz \
     && sudo tar -C /opt -xvzf quarto-1.3.361-linux-amd64.tar.gz \
     && ln -s /opt/quarto-1.3.361/bin/quarto /bin/quarto \
+    && wget https://github.com/valentjn/ltex-ls/releases/download/16.0.0/ltex-ls-16.0.0-linux-x64.tar.gz\
+    && sudo tar -C /opt -xvzf ltex-ls-16.0.0-linux-x64.tar.gz \
+    && ln -s /opt/ltex-ls-16.0.0-linux-x64/ltex-ls /bin/ltex-ls \
+    && echo "PATH=$PATH:/opt/ltex-ls-16.0.0/bin">> ~/.bashrc \
     && mkdir -p ~/.config/nvim \
     && git clone https://github.com/thadryanjs/nvim.git ~/.config/nvim \
     && cd ~/.config/nvim \
@@ -22,7 +26,10 @@ RUN dnf install -y wget git make clang neovim tmux nodejs julia \
     && mkdir -p ~/.config/tmux \
     && git clone https://github.com/thadryanjs/tmux-conf.git ~/.config/tmux \
     && mkdir -p ~/.tmux/plugins/tpm \
-    && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm \
+    && if [ ! -a ~/.inputrc ]; then echo '$include /etc/inputrc' > ~/.inputrc; fi \
+    && echo 'set completion-ignore-case On' >> ~/.inputrc
+
 
 # After install:
 #    Switch to master branch of nvim
